@@ -1,0 +1,56 @@
+<%- include('../partials/head', { title: 'Login' }) %>
+    <%- include('../partials/header') %>
+
+        <div class="container py-5" style="max-width:480px;">
+            <h3 class="text-center mb-4 fw-bold">Login</h3>
+            <% if (error) { %>
+                <div class="alert alert-danger py-2">
+                    <%= error %>
+                </div>
+                <% } %>
+                    <form method="POST" action="/auth/login" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control"
+                                value="<%= locals.old ? old.email : '' %>">
+                            <% if (errors.email) { %><small class="text-danger">
+                                    <%= errors.email.msg %>
+                                </small>
+                                <% } %>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="password-field">
+                                <input type="password" name="password" class="form-control">
+                                <button type="button" class="password-toggle-btn js-toggle-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <% if (errors.password) { %><small class="text-danger">
+                                    <%= errors.password.msg %>
+                                </small>
+                                <% } %>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                        <div class="d-flex justify-content-between mt-3 small">
+                            <a href="/auth/forgot-password">Forgot Password?</a>
+                            <a href="/auth/signup">Create Account</a>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <a href="/auth/google" class="btn btn-outline-secondary w-100">
+                                <i class="fab fa-google me-1"></i> Login with Google
+                            </a>
+                        </div>
+                    </form>
+        </div>
+
+        <% if (locals.passwordReset==='success' ) { %>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Alerts.toast('Password reset successfully. Please login with your new password.', 'success');
+                });
+            </script>
+            <% } %>
+
+                <%- include('../partials/footer') %>

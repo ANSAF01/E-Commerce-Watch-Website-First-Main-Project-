@@ -1,0 +1,167 @@
+<%- include('../partials/head',{title:'Shop'}) %>
+    <%- include('../partials/header') %>
+
+        <div class="container-fluid py-5"
+            style="background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%); min-height: 100vh;">
+            <div class="container">
+                <div class="mb-5">
+                    <h1 class="fw-bold mb-2">Shop</h1>
+                    <p class="text-muted">Discover our amazing collection of products</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <div class="card shadow-sm border-0 sticky-top" style="top: 80px;">
+                            <div class="card-header bg-primary text-white border-0">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-filter me-2"></i>Filters
+                                </h5>
+                            </div>
+                            <form action="/shop" method="GET" id="shopFilterForm">
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold mb-2">
+                                            <i class="fas fa-search me-2 text-primary"></i>Search
+                                        </label>
+                                        <div class="input-group" style="display: flex; flex-wrap: nowrap;">
+                                            <input type="text" class="form-control" id="searchInput" name="search"
+                                                placeholder="Search products..." value="<%= filters.search || '' %>"
+                                                style="flex: 1; min-width: 0;">
+                                            <button class="btn btn-primary" type="submit" id="searchBtn"
+                                                style="flex-shrink: 0;">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold mb-3">
+                                            <i class="fas fa-list me-2 text-primary"></i>Categories
+                                        </label>
+                                        <div class="category-filter">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" id="cat-all"
+                                                    name="category" value="all" <%=!filters.category ||
+                                                    filters.category==='all' ? 'checked' : '' %>
+                                                >
+                                                <label class="form-check-label" for="cat-all">
+                                                    <strong>All Categories</strong>
+                                                </label>
+                                            </div>
+                                            <% categories.forEach(cat=> { %>
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="radio" id="cat-<%= cat._id %>"
+                                                        name="category" value="<%= cat._id %>"
+                                                        <%=filters.category===cat._id.toString() ? 'checked' : '' %>
+                                                    >
+                                                    <label class="form-check-label" for="cat-<%= cat._id %>">
+                                                        <%= cat.name %>
+                                                    </label>
+                                                </div>
+                                                <% }); %>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold mb-3">
+                                            <i class="fas fa-tag me-2 text-primary"></i>Price Range
+                                        </label>
+                                        <div class="price-filter">
+                                            <div class="mb-2">
+                                                <label class="form-label small text-muted">Minimum Price (₹)</label>
+                                                <input type="number" class="form-control form-control-sm" id="minPrice"
+                                                    placeholder="Min" name="minPrice"
+                                                    value="<%= filters.minPrice || '' %>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label small text-muted">Maximum Price (₹)</label>
+                                                <input type="number" class="form-control form-control-sm" id="maxPrice"
+                                                    placeholder="Max" name="maxPrice"
+                                                    value="<%= filters.maxPrice || '' %>">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary btn-sm" type="submit" id="applyFiltersBtn">
+                                            <i class="fas fa-check me-2"></i>Apply Filters
+                                        </button>
+                                        <a href="/shop" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-redo me-2"></i>Clear All
+                                        </a>
+                                    </div>
+
+                                </div>
+                                <!-- Hidden Sort Input (synced via JS or separate form? Better to keep sort in main form if possible, but structure prevents it. JS will sync or Sort needs to be part of form) -->
+                                <!-- Moving Sort Select inside the form or duplicating inputs? 
+                                 Sort is outside. To make sort work without JS, it should be in the form.
+                                 Or the sort select submits the form on change. 
+                            -->
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <!-- Count -->
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                        <!-- Sort needs to be part of the form for GET params to persist together. 
+                                             But visual placement is here.
+                                             Solution: Sort select has 'form="shopFilterForm"' attribute. 
+                                        -->
+                                        <label class="form-label small fw-semibold mb-0 me-2">Sort By:</label>
+                                        <select class="form-select form-select-sm d-inline-block" style="width: auto;"
+                                            id="sortSelect" name="sort" form="shopFilterForm"
+                                            onchange="this.form.submit()">
+                                            <option value="new" <%=filters.sort==='new' ? 'selected' : '' %>>Newest
+                                            </option>
+                                            <option value="price_low" <%=filters.sort==='price_low' ? 'selected' : '' %>
+                                                >Price: Low to High</option>
+                                            <option value="price_high" <%=filters.sort==='price_high' ? 'selected' : ''
+                                                %>>Price: High to Low</option>
+                                            <option value="popular" <%=filters.sort==='popular' ? 'selected' : '' %>
+                                                >Popular</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <% if (products.length> 0) { %>
+                            <div class="row g-4 mb-4">
+                                <% products.forEach(product=> { %>
+                                    <div class="col-md-6 col-lg-4">
+                                        <%- include('../partials/product-card', { product }) %>
+                                    </div>
+                                    <% }); %>
+                            </div>
+                            <%- include('../partials/pagination') %>
+                                <% } else { %>
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body text-center py-5">
+                                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                            <h5 class="text-muted mb-2">No Products Found</h5>
+                                            <p class="text-muted mb-3">Try adjusting your filters or search terms</p>
+                                            <a href="/shop" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-redo me-2"></i>Clear Filters
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/pages/shop-page.js"></script>
+        <%- include('../partials/footer') %>

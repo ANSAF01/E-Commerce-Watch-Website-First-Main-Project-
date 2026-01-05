@@ -1,0 +1,149 @@
+<%- include('./partials/header', { title: 'Edit Coupon' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Edit Coupon</h1>
+    <a href="/admin/coupons" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Coupons
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <form id="editCouponForm" method="POST" action="/admin/coupons/<%= coupon._id %>/edit" novalidate>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Code</label>
+              <input type="text" class="form-control" value="<%= coupon.code %>" disabled>
+              <small class="text-muted">Code cannot be changed</small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Type</label>
+              <input type="text" class="form-control"
+                value="<%= coupon.type === 'PERCENT' ? 'Percentage Discount' : 'Flat Discount' %>" disabled>
+              <small class="text-muted">Type cannot be changed</small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                <%= coupon.type==='PERCENT' ? 'Discount Percentage (%)' : 'Discount Amount (₹)' %>
+              </label>
+              <input type="number" name="discountValue"
+                class="form-control <%= errors.discountValue ? 'is-invalid' : '' %>"
+                placeholder="<%= coupon.type === 'PERCENT' ? 'e.g., 20' : 'e.g., 100' %>"
+                value="<%= coupon.discountValue %>" step="0.01" min="0" <%=coupon.type==='PERCENT' ? 'max="100"' : '' %>
+              >
+              <% if (errors.discountValue) { %>
+                <div class="invalid-feedback d-block">
+                  <%= errors.discountValue.msg %>
+                </div>
+                <% } %>
+            </div>
+
+            <% if (coupon.type==='PERCENT' ) { %>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Maximum Discount (₹)</label>
+                <input type="number" name="maxDiscount"
+                  class="form-control <%= errors.maxDiscount ? 'is-invalid' : '' %>" placeholder="e.g., 500"
+                  value="<%= coupon.maxDiscount || '' %>" step="0.01" min="0">
+                <% if (errors.maxDiscount) { %>
+                  <div class="invalid-feedback d-block">
+                    <%= errors.maxDiscount.msg %>
+                  </div>
+                  <% } %>
+              </div>
+              <% } %>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Minimum Purchase (₹)</label>
+                  <input type="number" name="minPurchase"
+                    class="form-control <%= errors.minPurchase ? 'is-invalid' : '' %>" placeholder="e.g., 500"
+                    value="<%= coupon.minPurchase || '' %>" step="0.01" min="0">
+                  <% if (errors.minPurchase) { %>
+                    <div class="invalid-feedback d-block">
+                      <%= errors.minPurchase.msg %>
+                    </div>
+                    <% } %>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Expiry Date (Optional)</label>
+                  <input type="date" name="expiresAt" class="form-control <%= errors.expiresAt ? 'is-invalid' : '' %>"
+                    <% if (coupon.expiresAt) { %>
+                  value="<%= coupon.expiresAt.toISOString().split('T')[0] %>"
+                    <% } %>
+                      >
+                      <% if (errors.expiresAt) { %>
+                        <div class="invalid-feedback d-block">
+                          <%= errors.expiresAt.msg %>
+                        </div>
+                        <% } %>
+                          <small class="text-muted">Leave empty for no expiry</small>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                  </button>
+                  <a href="/admin/coupons" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-2"></i>Cancel
+                  </a>
+                </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Coupon Details</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <small class="text-muted">Code</small>
+            <p class="mb-0"><strong>
+                <%= coupon.code %>
+              </strong></p>
+          </div>
+          <div class="mb-3">
+            <small class="text-muted">Type</small>
+            <p class="mb-0">
+              <% if (coupon.type==='PERCENT' ) { %>
+                <span class="badge bg-info">Percentage</span>
+                <% } else { %>
+                  <span class="badge bg-success">Flat</span>
+                  <% } %>
+            </p>
+          </div>
+          <div class="mb-3">
+            <small class="text-muted">Status</small>
+            <p class="mb-0">
+              <% if (coupon.isActive) { %>
+                <span class="badge bg-success">Active</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">Inactive</span>
+                  <% } %>
+            </p>
+          </div>
+          <div class="mb-3">
+            <small class="text-muted">Created</small>
+            <p class="mb-0">
+              <%= new Date(coupon.createdAt).toLocaleDateString() %>
+            </p>
+          </div>
+          <div class="mb-3">
+            <small class="text-muted">Times Used</small>
+            <p class="mb-0">
+              <%= coupon.usedBy ? coupon.usedBy.length : 0 %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin/edit-coupon-page.js"></script>
+
+  <%- include('./partials/footer') %>

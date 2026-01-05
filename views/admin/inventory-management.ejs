@@ -1,0 +1,78 @@
+<%- include('./partials/header', { title: 'Inventory Management' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Inventory Management</h1>
+  </div>
+
+  <% if (locals.success && locals.success.length> 0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      <%= success[0] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <% } %>
+      <% if (locals.error && locals.error.length> 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <%= error[0] %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product Name</th>
+                      <th>Category</th>
+                      <th>Current Stock</th>
+                      <th>Update Stock</th>
+                      <th class="text-end">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (locals.products && products.length> 0) { %>
+                      <% products.forEach(p=> { %>
+                        <tr>
+                          <td><strong>
+                              <%= p.name %>
+                            </strong></td>
+                          <td><small class="text-muted">
+                              <%= p.category ? p.category.name : '-' %>
+                            </small></td>
+                          <td>
+                            <span
+                              class="badge <%= p.stock > 10 ? 'bg-success' : p.stock > 0 ? 'bg-warning text-dark' : 'bg-danger' %>">
+                              <%= p.stock %>
+                            </span>
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm stock-input" data-id="<%= p._id %>"
+                              value="<%= p.stock %>" min="0" style="max-width: 120px;">
+                          </td>
+                          <td class="text-end">
+                            <button class="btn btn-sm btn-outline-success update-stock" data-id="<%= p._id %>">
+                              <i class="fas fa-save me-1"></i>Save
+                            </button>
+                          </td>
+                        </tr>
+                        <% }) %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                No products found
+                              </td>
+                            </tr>
+                            <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <%- include('../partials/pagination', { pagination }) %>
+
+            <%- include('./partials/footer') %>

@@ -1,0 +1,124 @@
+<%- include('../partials/head', { title: 'Edit Profile' }) %>
+  <%- include('../partials/header') %>
+
+    <main class="container-fluid py-5">
+      <div class="row g-4">
+        <div class="col-12 col-md-3 col-lg-3">
+          <div class="position-sticky" style="top: 5rem;">
+            <%- include('../partials/profile-sidebar', { page: 'edit' }) %>
+          </div>
+        </div>
+        <div class="col-12 col-md-9 col-lg-9">
+          <div class="ps-md-3 mt-4">
+            <h1 class="mb-3">Edit Profile</h1>
+            <hr class="mb-4">
+            <% if (locals.user) { %>
+              <div class="card">
+                <div class="card-body">
+                  <% if (locals.errors && locals.errors.length> 0) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      <strong>Validation Errors:</strong>
+                      <ul class="mb-0 mt-2">
+                        <% locals.errors.forEach(error=> { %>
+                          <li>
+                            <%= error.msg %>
+                          </li>
+                          <% }); %>
+                      </ul>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <% } %>
+
+                      <form id="editProfileForm" action="/user/profile/edit" method="POST"
+                        enctype="multipart/form-data">
+                        <div class="row g-3 align-items-start mb-3">
+                          <div class="col-auto">
+                            <div class="position-relative" style="width: 96px; height: 96px;">
+                              <div
+                                class="d-flex align-items-center justify-content-center border rounded position-relative w-100 h-100"
+                                style="background: #f8f9fa; overflow: hidden;">
+                                <img id="profileImagePreview"
+                                  src="<%= user && user.profileImage ? user.profileImage : '' %>" alt="Profile photo"
+                                  class="img-fluid rounded"
+                                  style="max-width: 100%; max-height: 100%; object-fit: cover; display: <%= user && user.profileImage ? 'block' : 'none' %>;"
+                                  onerror="this.style.display='none'; document.getElementById('profileImagePlaceholder').style.display='block';">
+                                <i id="profileImagePlaceholder" class="fas fa-user text-muted"
+                                  style="font-size: 42px; display: <%= user && user.profileImage ? 'none' : 'block' %>;"></i>
+                              </div>
+                              <button type="button" class="btn btn-sm btn-primary position-absolute"
+                                style="bottom: 0; right: 0; border-radius: 50%; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                id="editImageBtn" title="Edit photo">
+                                <i class="fas fa-pencil-alt" style="font-size: 12px;"></i>
+                              </button>
+                              <input type="file" id="profileImageInput" name="profileImage"
+                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" style="display: none;">
+                            </div>
+                            <div class="form-text text-muted mt-2" style="font-size: 12px;">
+                              Add/Change photo</div>
+                          </div>
+                          <div class="col">
+                            <label for="fullname" class="form-label">Full Name <span
+                                class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="fullname" name="fullname"
+                              value="<%= user && user.fullname ? user.fullname : '' %>" maxlength="50"
+                              placeholder="Enter full name">
+                            <small class="form-text text-muted">2-50 characters</small>
+                            <small class="text-danger d-block mt-1" id="fullnameError" style="display: none;"></small>
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <label for="email" class="form-label">Email address</label>
+                          <div class="input-group">
+                            <input type="email" class="form-control" id="email"
+                              value="<%= user && user.email ? user.email : '' %>" readonly>
+                            <button class="btn btn-outline-primary" type="button" id="changeEmailBtn">Change
+                              Email</button>
+                          </div>
+                          <small class="form-text text-muted">Click "Change Email" to update
+                            your email address.</small>
+                        </div>
+                        <div class="mb-3">
+                          <label for="mobile" class="form-label">Mobile Number</label>
+                          <input type="tel" class="form-control" id="mobile" name="mobile"
+                            value="<%= user && user.mobile ? user.mobile : '' %>"
+                            placeholder="10 digit mobile number (optional)">
+                          <small class="form-text text-muted">10 digits only (optional)</small>
+                          <small class="text-danger d-block mt-1" id="mobileError" style="display: none;"></small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save
+                          Changes</button>
+                      </form>
+                </div>
+              </div>
+              <% } else { %>
+                <p>Please <a href="/auth/login">log in</a> to edit your profile.</p>
+                <% } %>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Change Email Modal -->
+    <div class="modal fade" id="changeEmailModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Change Email Address</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Enter your new email address. We'll send an OTP to verify it.</p>
+            <div class="mb-3">
+              <label for="newEmail" class="form-label">New Email Address <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" id="newEmail" placeholder="Enter new email address">
+              <small class="form-text text-muted">Must be different from current email</small>
+            </div>
+            <button type="button" class="btn btn-primary w-100" id="sendOtpBtn">Send OTP</button>
+            <small class="text-muted d-block mt-2">You will be redirected to the verification page.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/pages/edit-profile-page.js"></script>
+    <%- include('../partials/footer') %>

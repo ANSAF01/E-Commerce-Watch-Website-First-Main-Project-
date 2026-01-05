@@ -1,0 +1,103 @@
+<%- include('partials/header') %>
+
+  <div class="container-fluid mt-4">
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h2>Product Offers</h2>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form id="productOfferForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="productId" class="form-label">Select Product</label>
+              <select class="form-select" id="productId" name="productId">
+                <option value="">-- Choose Product --</option>
+                <% products.forEach(product=> { %>
+                  <option value="<%= product._id %>">
+                    <%= product.name %> (Category: <%= product.category?.name || 'N/A' %>)
+                  </option>
+                  <% }); %>
+              </select>
+              <small class="text-danger d-none" id="error-productId"></small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="percent" class="form-label">Offer Percentage (%)</label>
+              <input type="number" class="form-control" id="percent" name="percent" min="0" max="100"
+                placeholder="Enter offer percentage">
+              <small class="text-danger d-none" id="error-percent"></small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="startAt" class="form-label">Start Date (Optional)</label>
+              <input type="date" class="form-control" id="startAt" name="startAt">
+              <small class="text-danger d-none" id="error-startAt"></small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="endAt" class="form-label">End Date (Optional)</label>
+              <input type="date" class="form-control" id="endAt" name="endAt">
+              <small class="text-danger d-none" id="error-endAt"></small>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Apply Offer</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5>Active Product Offers</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Offer %</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% products.forEach(product=> { %>
+                <% if (product.offer && product.offer.active && product.offer.percent> 0) { %>
+                  <tr>
+                    <td>
+                      <%= product.name %>
+                    </td>
+                    <td>
+                      <%= product.category?.name || 'N/A' %>
+                    </td>
+                    <td><strong>
+                        <%= product.offer.percent %>%
+                      </strong></td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td>
+                      <%= product.offer.startAt ? new Date(product.offer.startAt).toLocaleDateString() : 'N/A' %>
+                    </td>
+                    <td>
+                      <%= product.offer.endAt ? new Date(product.offer.endAt).toLocaleDateString() : 'N/A' %>
+                    </td>
+                  </tr>
+                  <% } %>
+                    <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin/offers-page.js"></script>
+
+  <%- include('partials/footer') %>

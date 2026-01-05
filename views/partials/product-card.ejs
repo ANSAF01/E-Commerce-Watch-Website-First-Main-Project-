@@ -1,0 +1,50 @@
+<% let statusLabel='' ; let statusClass='' ; if (product.stock===0) { statusLabel='Sold Out' ;
+    statusClass='bg-warning text-dark' ; } const imageUrl=(product.images && product.images.length> 0) ?
+    product.images[0] : '/images/banner.jpg';
+    const displayPrice = product.offerPrice || product.price;
+    const hasOffer = product.bestOfferPercent && product.bestOfferPercent > 0;
+    %>
+    <div class="card h-100 product-card">
+        <a href="/product/<%= product._id %>" class="d-block position-relative text-decoration-none">
+            <% if (hasOffer) { %>
+                <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                    <%= product.bestOfferPercent %>% OFF
+                </span>
+                <% } %>
+                    <% if (statusLabel) { %>
+                        <span class="badge <%= statusClass %> position-absolute top-0 end-0 m-2">
+                            <%= statusLabel %>
+                        </span>
+                        <% } %>
+                            <div class="img-wrap">
+                                <img src="<%= imageUrl %>" class="card-img-top" alt="<%= product.name %>">
+                            </div>
+        </a>
+        <div class="card-body text-center d-flex flex-column">
+            <h5 class="card-title h6"><a href="/product/<%= product._id %>" class="text-dark text-decoration-none">
+                    <%= product.name %>
+                </a></h5>
+            <% if (hasOffer) { %>
+                <p class="price mb-1">
+                    <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">₹<%=
+                            Math.round(product.price) %></span>
+                    <span style="margin-left: 5px;">₹<%= Math.round(displayPrice) %></span>
+                </p>
+                <small class="text-success mb-2">Special Offer</small>
+                <% } else { %>
+                    <p class="price mb-3">₹<%= Math.round(displayPrice) %>
+                    </p>
+                    <% } %>
+                        <div class="mt-auto d-flex justify-content-center gap-2">
+                            <button class="btn btn-primary btn-sm w-100 add-to-cart-btn"
+                                data-product-id="<%= product._id %>" <%=product.stock===0 ? 'disabled' : '' %>
+                                title="Add to Cart">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm add-to-wishlist-btn"
+                                data-product-id="<%= product._id %>" title="Add to Wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+        </div>
+    </div>

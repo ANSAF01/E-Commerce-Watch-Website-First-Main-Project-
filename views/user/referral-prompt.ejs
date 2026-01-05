@@ -1,0 +1,40 @@
+<%- include('../partials/head', { title: title || 'Claim Referral Bonus' }) %>
+  <%- include('../partials/header') %>
+
+    <main class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h3 class="mb-3">Welcome, <%= user.fullname %>!</h3>
+              <p class="text-muted">You can claim a one-time referral bonus by entering a friend’s referral code. You
+                will receive Rs. <%= offer.refereeBonus %>. You can also skip and do this later.</p>
+
+              <div class="mb-3">
+                <label for="referralCode" class="form-label">Enter Referral Code (optional)</label>
+                <input type="text" id="referralCode" class="form-control" placeholder="e.g., ABC123">
+                <div class="form-text">Don’t use your own code.</div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button id="skipBtn" class="btn btn-outline-secondary">Skip</button>
+                <button id="applyBtn" class="btn btn-primary">Apply & Continue</button>
+              </div>
+
+              <hr class="my-4">
+              <div>
+                <h6>Your Referral Code</h6>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="myCode" value="<%= myCode %>" readonly>
+                  <button class="btn btn-outline-secondary" type="button" id="copyCodeBtn">Copy</button>
+                </div>
+                <div class="form-text mt-2">Share this code with friends to earn rewards.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+      <script src="/js/pages/referral-prompt-page.js"></script>

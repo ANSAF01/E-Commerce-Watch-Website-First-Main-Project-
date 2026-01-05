@@ -1,0 +1,181 @@
+<%- include('../partials/head', { title: 'My Addresses' }) %>
+  <%- include('../partials/header') %>
+
+    <main class="container-fluid py-5">
+      <div class="row g-4">
+        <div class="col-12 col-md-3 col-lg-3">
+          <div class="position-sticky" style="top: 5rem;">
+            <%- include('../partials/profile-sidebar', { page: 'addresses' }) %>
+          </div>
+        </div>
+        <div class="col-12 col-md-9 col-lg-9">
+          <div class="ps-md-3 mt-4">
+            <h1 class="mb-3">My Addresses</h1>
+            <hr class="mb-4">
+            <% if (locals.user) { %>
+              <% const addressesList=locals.addresses || []; %>
+                <div class="row g-3 mb-4">
+                  <% if (addressesList.length===0) { %>
+                    <div class="col-12">
+                      <div class="alert alert-info">No addresses saved yet. Add your first address below.</div>
+                    </div>
+                    <% } %>
+                      <% addressesList.forEach(a=> { %>
+                        <div class="col-12">
+                          <div class="card">
+                            <div class="card-body d-flex justify-content-between align-items-start">
+                              <div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                  <div class="badge bg-secondary text-uppercase">
+                                    <%= a.type || 'home' %>
+                                  </div>
+                                  <% if (a.isDefault) { %>
+                                    <div class="badge bg-success">Default</div>
+                                    <% } %>
+                                </div>
+                                <div class="fw-semibold">
+                                  <%= a.address %>
+                                </div>
+                                <div class="text-muted">
+                                  <%= a.landmark ? a.landmark + ', ' : '' %>
+                                    <%= a.city %>, <%= a.district || a.state %>, <%= a.state %> - <%= a.pincode %>
+                                </div>
+                                <div class="text-muted small">Saved on <%= new Date(a.createdAt ||
+                                    a.timestamp).toLocaleString() %>
+                                </div>
+                              </div>
+                              <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary js-edit-address" data-id="<%= a._id %>"
+                                  data-address="<%= a.address.replace(/'/g, '&#39;') %>"
+                                  data-district="<%= a.district || '' %>" data-city="<%= a.city %>"
+                                  data-state="<%= a.state %>" data-pincode="<%= a.pincode %>"
+                                  data-landmark="<%= (a.landmark||'').replace(/'/g, '&#39;') %>"
+                                  data-type="<%= a.type || 'home' %>">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger js-delete-address"
+                                  data-id="<%= a._id %>">Delete</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <% }) %>
+                </div>
+
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Add New Address</h5>
+
+                    <form id="addressForm" class="row g-3">
+                      <div class="col-md-12">
+                        <label class="form-label">Address <span class="text-danger">*</span></label>
+                        <input type="text" name="address" class="form-control" placeholder="Enter full address">
+                        <small class="text-danger d-none" id="error-address"></small>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">District <span class="text-danger">*</span></label>
+                        <input type="text" name="district" class="form-control" placeholder="e.g., Ernakulam">
+                        <small class="text-danger d-none" id="error-district"></small>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">City <span class="text-danger">*</span></label>
+                        <input type="text" name="city" class="form-control" placeholder="e.g., Kochi">
+                        <small class="text-danger d-none" id="error-city"></small>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">State <span class="text-danger">*</span></label>
+                        <input type="text" name="state" class="form-control" placeholder="e.g., Kerala">
+                        <small class="text-danger d-none" id="error-state"></small>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Pincode <span class="text-danger">*</span></label>
+                        <input type="text" name="pincode" class="form-control" placeholder="6 digits">
+                        <small class="text-danger d-none" id="error-pincode"></small>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Landmark</label>
+                        <input type="text" name="landmark" class="form-control" placeholder="Optional">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Type</label>
+                        <select name="type" class="form-select">
+                          <option value="home">Home</option>
+                          <option value="office">Office</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <button type="submit" class="btn btn-dark">Save Address</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editAddressModal" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Edit Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form id="editAddressForm">
+                        <div class="modal-body row g-3">
+                          <input type="hidden" name="id" id="edit-id">
+                          <div class="col-12">
+                            <label class="form-label">Address <span class="text-danger">*</span></label>
+                            <input type="text" name="address" id="edit-address" class="form-control">
+                            <small class="text-danger" id="edit-error-address"></small>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">District <span class="text-danger">*</span></label>
+                            <input type="text" name="district" id="edit-district" class="form-control">
+                            <small class="text-danger" id="edit-error-district"></small>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">City <span class="text-danger">*</span></label>
+                            <input type="text" name="city" id="edit-city" class="form-control">
+                            <small class="text-danger" id="edit-error-city"></small>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">State <span class="text-danger">*</span></label>
+                            <input type="text" name="state" id="edit-state" class="form-control">
+                            <small class="text-danger" id="edit-error-state"></small>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">Pincode <span class="text-danger">*</span></label>
+                            <input type="text" name="pincode" id="edit-pincode" class="form-control">
+                            <small class="text-danger" id="edit-error-pincode"></small>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">Landmark</label>
+                            <input type="text" name="landmark" id="edit-landmark" class="form-control">
+                            <small class="text-danger" id="edit-error-landmark"></small>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">Type</label>
+                            <select name="type" id="edit-type" class="form-select">
+                              <option value="home">Home</option>
+                              <option value="office">Office</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          <button type="submit" class="btn btn-dark">Update</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <% } else { %>
+                  <p>Please <a href="/auth/login">log in</a> to manage your addresses.</p>
+                  <% } %>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+      <script src="/js/user-common.js"></script>
+      <script src="/js/pages/addresses-page.js"></script>

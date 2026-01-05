@@ -1,0 +1,172 @@
+<%- include('./partials/header', { title: 'Order Detail' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Order #<%= order.orderId %>
+    </h1>
+    <a href="/admin/orders" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Orders
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Order Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Order ID:</strong>
+                <%= order.orderId %>
+              </p>
+              <p><strong>Customer:</strong>
+                <%= order.userId ? order.userId.fullname : 'N/A' %>
+              </p>
+              <p><strong>Email:</strong>
+                <%= order.userId ? order.userId.email : 'N/A' %>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Order Date:</strong>
+                <%= new Date(order.createdAt).toLocaleDateString() %>
+              </p>
+              <p><strong>Payment Method:</strong>
+                <%= order.paymentMethod %>
+              </p>
+              <p><strong>Payment Status:</strong>
+                <span
+                  class="badge <%= order.paymentStatus === 'PAID' ? 'bg-success' : order.paymentStatus === 'PENDING' ? 'bg-warning text-dark' : 'bg-danger' %>">
+                  <%= order.paymentStatus %>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Order Items</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Item Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% order.items.forEach(item=> { %>
+                  <tr>
+                    <td>
+                      <strong>
+                        <%= item.name %>
+                      </strong>
+                      <% if (item.image) { %>
+                        <br><small class="text-muted">ID: <%= item.productId %></small>
+                        <% } %>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark">
+                        <%= item.quantity %>
+                      </span>
+                    </td>
+                    <td>
+                      <strong>₹<%= item.unitPrice.toFixed(2) %></strong>
+                    </td>
+                    <td>
+                      <strong class="text-success">₹<%= item.lineTotal.toFixed(2) %></strong>
+                    </td>
+                    <td>
+                      <% let itemBadgeClass='bg-info' ; if (item.status==='DELIVERED' ) itemBadgeClass='bg-success' ; if
+                        (item.status==='CANCELLED' ) itemBadgeClass='bg-danger' ; if (item.status==='RETURNED' )
+                        itemBadgeClass='bg-secondary' ; if (item.status==='PENDING' )
+                        itemBadgeClass='bg-warning text-dark' ; if (item.status==='CONFIRMED' )
+                        itemBadgeClass='bg-primary' ; if (item.status==='SHIPPED' ) itemBadgeClass='bg-info' ; if
+                        (item.status==='OUT_FOR_DELIVERY' ) itemBadgeClass='bg-info' ; if
+                        (item.status==='PENDING_RETURN' ) itemBadgeClass='bg-warning text-dark' ; %>
+                        <span class="badge <%= itemBadgeClass %>">
+                          <%= item.status %>
+                        </span>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Shipping Address</h5>
+        </div>
+        <div class="card-body">
+          <p>
+            <%= order.address.address %><br>
+              <%= order.address.city %>, <%= order.address.state %>
+                  <%= order.address.pincode %><br>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Order Summary</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            ₹<%= order.subtotal.toFixed(2) %>
+              </strong>
+          </div>
+          <% if (order.discountTotal> 0) { %>
+            <div class="d-flex justify-content-between mb-2 text-success">
+              <span>Discount:</span>
+              <strong>-₹<%= order.discountTotal.toFixed(2) %></strong>
+            </div>
+            <% } %>
+              <% if (order.shippingFee> 0) { %>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Shipping:</span>
+                  ₹<%= order.shippingFee.toFixed(2) %>
+                    </strong>
+                </div>
+                <% } %>
+                  <hr>
+                  <div class="d-flex justify-content-between mb-3">
+                    <span class="fw-bold">Grand Total:</span>
+                    ₹<%= order.grandTotal.toFixed(2) %>
+                      </strong>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Order Status</label>
+                    <select class="form-select" id="orderStatus" data-order-id="<%= order._id %>">
+                      <option value="CONFIRMED" <%=order.status==='CONFIRMED' ? 'selected' : '' %>>Confirmed</option>
+                      <option value="SHIPPED" <%=order.status==='SHIPPED' ? 'selected' : '' %>>Shipped</option>
+                      <option value="OUT_FOR_DELIVERY" <%=order.status==='OUT_FOR_DELIVERY' ? 'selected' : '' %>>Out for
+                        Delivery</option>
+                      <option value="DELIVERED" <%=order.status==='DELIVERED' ? 'selected' : '' %>>Delivered</option>
+                    </select>
+                  </div>
+
+                  <button class="btn btn-primary w-100" id="updateStatusBtn">
+                    <i class="fas fa-save me-2"></i>Update Status
+                  </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('./partials/footer') %>
+
+    <script src="/js/admin/order-detail-page.js"></script>

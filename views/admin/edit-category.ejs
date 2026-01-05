@@ -1,0 +1,56 @@
+<%- include('./partials/header', { title: 'Edit Category' }) %>
+
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Edit Category</h1>
+  <a href="/admin/categories" class="btn btn-outline-secondary btn-sm">
+    <i class="fas fa-arrow-left me-2"></i>Back to Categories
+  </a>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-body">
+        <form method="POST" action="/admin/categories/edit/<%= category._id %>" novalidate>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Category Name</label>
+            <input 
+              type="text" 
+              name="name" 
+              class="form-control" 
+              placeholder="Enter category name"
+              value="<%= category.name %>"
+            >
+            <% if (errors.name) { %>
+              <small class="text-danger"><%= errors.name.msg %></small>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea 
+              name="description" 
+              class="form-control" 
+              rows="4"
+              placeholder="Enter category description (optional)"
+            ><%= category.description || '' %></textarea>
+            <% if (errors.description) { %>
+              <small class="text-danger"><%= errors.description.msg %></small>
+            <% } %>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Save Changes
+            </button>
+            <a href="/admin/categories" class="btn btn-outline-secondary">
+              <i class="fas fa-times me-2"></i>Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

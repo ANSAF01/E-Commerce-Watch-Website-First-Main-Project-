@@ -1,0 +1,138 @@
+<%- include('./partials/header', { title: 'Add Product' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Add New Product</h1>
+    <a href="/admin/products" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Products
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <form method="POST" action="/admin/products/add" enctype="multipart/form-data" id="productForm" novalidate>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Product Name</label>
+              <input type="text" name="name" class="form-control" placeholder="Enter product name"
+                value="<%= old.name || '' %>">
+              <small class="text-danger">
+                <%= locals.errors && errors.name ? errors.name.msg : '' %>
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Category</label>
+              <select name="category" class="form-select">
+                <option value="">Select a category</option>
+                <% categories.forEach(c=> { %>
+                  <option value="<%= c._id %>" <%=old.category===c._id.toString() ? 'selected' : '' %>>
+                    <%= c.name %>
+                  </option>
+                  <% }) %>
+              </select>
+              <small class="text-danger">
+                <%= locals.errors && errors.category ? errors.category.msg : '' %>
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Description</label>
+              <textarea name="description" class="form-control" rows="4"
+                placeholder="Enter product description"><%= old.description || '' %></textarea>
+              <small class="text-danger">
+                <%= locals.errors && errors.description ? errors.description.msg : '' %>
+              </small>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Price (₹)</label>
+                <input type="number" step="0.01" name="price" class="form-control" placeholder="0.00"
+                  value="<%= old.price || '' %>">
+                <small class="text-danger">
+                  <%= locals.errors && errors.price ? errors.price.msg : '' %>
+                </small>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Stock Quantity</label>
+                <input type="number" name="stock" class="form-control" placeholder="0" value="<%= old.stock || '' %>">
+                <small class="text-danger">
+                  <%= locals.errors && errors.stock ? errors.stock.msg : '' %>
+                </small>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Product Images (3 )</label>
+              <div class="row g-3" id="imageBoxes">
+                <% for (let i=0; i < 3; i++) { %>
+                  <div class="col-md-4">
+                    <div class="image-box border-2 border-dashed rounded text-center position-relative"
+                      data-image-index="<%= i %>">
+                      <input type="file" name="images" accept="image/*" class="image-input" data-index="<%= i %>">
+                      <div class="image-placeholder d-flex flex-column align-items-center justify-content-center h-100">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
+                        <p class="text-muted mb-1">Image <%= i + 1 %>
+                        </p>
+                        <small class="text-muted">Click to upload</small>
+                      </div>
+                      <img class="image-preview" alt="<%= i + 1 %>">
+                      <button type="button" class="btn btn-sm btn-danger remove-image">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                    <small class="text-danger error-message"></small>
+                  </div>
+                  <% } %>
+              </div>
+              <% if (errors.images) { %>
+                <small class="text-danger">
+                  <%= errors.images.msg %>
+                </small>
+                <% } %>
+                  <small class="text-danger d-block" id="imagesValidationError"
+                    style="display: none; margin-top: 0.5rem;"></small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Product
+              </button>
+              <a href="/admin/products" class="btn btn-outline-secondary">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content crop-box">
+        <div class="crop-box-header">
+          <span class="crop-title">Crop Image</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="crop-box-body">
+          <div class="cropper-stage">
+            <img id="cropperImage" alt="Crop area">
+          </div>
+        </div>
+        <div class="crop-box-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="cropButton">Crop & Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script src="/js/pages/cropper-modal.js"></script>
+
+  <script src="/js/admin/add-product-page.js"></script>
+
+  <%- include('./partials/footer') %>

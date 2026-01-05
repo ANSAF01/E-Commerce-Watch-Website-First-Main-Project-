@@ -1,0 +1,243 @@
+<%- include('./partials/header', { title: 'Offers' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Offers</h1>
+  </div>
+
+  <% if (locals.success && locals.success.length> 0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      <%= success[0] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <% } %>
+      <% if (locals.error && locals.error.length> 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <%= error[0] %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+          <div class="row g-4">
+            <!-- Product Offer Form -->
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="mb-0"><i class="fas fa-tag me-2"></i>Product Offer</h5>
+                </div>
+                <div class="card-body">
+                  <form id="productOfferForm">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Select Product</label>
+                      <select class="form-select" id="productId" name="productId">
+                        <option value="">-- Choose Product --</option>
+                        <% products.forEach(product=> { %>
+                          <option value="<%= product._id %>">
+                            <%= product.name %> (Category: <%= product.category?.name || 'N/A' %>)
+                          </option>
+                          <% }); %>
+                      </select>
+                      <small class="text-danger d-none" id="error-productId"></small>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Offer Percentage (%)</label>
+                      <input type="number" class="form-control" id="productPercent" name="percent" min="0" max="100"
+                        placeholder="e.g., 20">
+                      <small class="text-danger d-none" id="error-percent"></small>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Start Date (Optional)</label>
+                      <input type="date" class="form-control" id="productStartAt" name="startAt">
+                      <small class="text-danger d-none" id="error-startAt"></small>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">End Date (Optional)</label>
+                      <input type="date" class="form-control" id="productEndAt" name="endAt">
+                      <small class="text-danger d-none" id="error-endAt"></small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                      <i class="fas fa-plus me-2"></i>Add Product Offer
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category Offer Form -->
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header bg-success text-white">
+                  <h5 class="mb-0"><i class="fas fa-folder me-2"></i>Category Offer</h5>
+                </div>
+                <div class="card-body">
+                  <form id="categoryOfferForm">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Select Category</label>
+                      <select class="form-select" id="categoryId" name="categoryId">
+                        <option value="">-- Choose Category --</option>
+                        <% categories.forEach(category=> { %>
+                          <option value="<%= category._id %>">
+                            <%= category.name %>
+                          </option>
+                          <% }); %>
+                      </select>
+                      <small class="text-danger d-none" id="error-cat-categoryId"></small>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Offer Percentage (%)</label>
+                      <input type="number" class="form-control" id="categoryPercent" name="percent" min="0" max="100"
+                        placeholder="e.g., 15">
+                      <small class="text-danger d-none" id="error-cat-percent"></small>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Start Date (Optional)</label>
+                      <input type="date" class="form-control" id="categoryStartAt" name="startAt">
+                      <small class="text-danger d-none" id="error-cat-startAt"></small>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">End Date (Optional)</label>
+                      <input type="date" class="form-control" id="categoryEndAt" name="endAt">
+                      <small class="text-danger d-none" id="error-cat-endAt"></small>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                      <i class="fas fa-plus me-2"></i>Add Category Offer
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- All Offers List -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">All Offers (<%= (products.filter(p=> p.offer && p.offer.percent > 0).length) +
+                      (categories.filter(c => c.offer && c.offer.percent > 0).length) %>)</h5>
+                </div>
+                <div class="card-body p-0">
+                  <% const productOffers=products.filter(p=> p.offer && p.offer.percent > 0).map(p => ({
+                    ...p,
+                    offerType: 'Product'
+                    }));
+                    const categoryOffers = categories.filter(c => c.offer && c.offer.percent > 0).map(c => ({
+                    ...c,
+                    offerType: 'Category'
+                    }));
+                    const allOffers = [...productOffers, ...categoryOffers];
+                    %>
+                    <% if (allOffers.length===0) { %>
+                      <div class="p-4 text-center text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                        <p>No offers yet</p>
+                      </div>
+                      <% } else { %>
+                        <div class="table-responsive">
+                          <table class="table table-sm align-middle mb-0">
+                            <thead class="table-light">
+                              <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Offer %</th>
+                                <th>Status</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th class="text-end">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% allOffers.forEach(offer=> { %>
+                                <tr>
+                                  <td>
+                                    <strong>
+                                      <% if (offer.offerType==='Product' ) { %>
+                                        <%= offer.name %>
+                                          <% } else { %>
+                                            <%= offer.name %>
+                                              <% } %>
+                                    </strong>
+                                    <% if (offer.offerType==='Product' && offer.category) { %>
+                                      <br><small class="text-muted">Category: <%= offer.category.name %></small>
+                                      <% } %>
+                                  </td>
+                                  <td>
+                                    <% if (offer.offerType==='Product' ) { %>
+                                      <span class="badge bg-primary">Product</span>
+                                      <% } else { %>
+                                        <span class="badge bg-success">Category</span>
+                                        <% } %>
+                                  </td>
+                                  <td><span class="badge bg-info">
+                                      <%= offer.offer.percent %>%
+                                    </span></td>
+                                  <td>
+                                    <% if (offer.offer.active) { %>
+                                      <span class="badge bg-success">Active</span>
+                                      <% } else { %>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                        <% } %>
+                                  </td>
+                                  <td><small>
+                                      <%= offer.offer.startAt ? new Date(offer.offer.startAt).toLocaleDateString() : '—'
+                                        %>
+                                    </small></td>
+                                  <td><small>
+                                      <%= offer.offer.endAt ? new Date(offer.offer.endAt).toLocaleDateString() : '—' %>
+                                    </small></td>
+                                  <td class="text-end">
+                                    <div class="d-flex align-items-center gap-2 justify-content-end">
+                                      <% if (offer.offerType==='Product' ) { %>
+                                        <label class="toggle-switch">
+                                          <input type="checkbox" class="toggle-product-offer-switch"
+                                            data-product-id="<%= offer._id %>" <%=offer.offer.active ? 'checked' : ''
+                                            %>>
+                                          <span class="slider"></span>
+                                        </label>
+                                        <span class="status-text">
+                                          <%= offer.offer.active ? 'Active' : 'Inactive' %>
+                                        </span>
+                                        <button class="btn btn-sm btn-outline-danger delete-offer-product"
+                                          data-id="<%= offer._id %>">
+                                          Delete
+                                        </button>
+                                        <% } else { %>
+                                          <label class="toggle-switch">
+                                            <input type="checkbox" class="toggle-category-offer-switch"
+                                              data-category-id="<%= offer._id %>" <%=offer.offer.active ? 'checked' : ''
+                                              %>>
+                                            <span class="slider"></span>
+                                          </label>
+                                          <span class="status-text">
+                                            <%= offer.offer.active ? 'Active' : 'Inactive' %>
+                                          </span>
+                                          <button class="btn btn-sm btn-outline-danger delete-offer-category"
+                                            data-id="<%= offer._id %>">
+                                            Delete
+                                          </button>
+                                          <% } %>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                          </table>
+                        </div>
+                        <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <script src="/js/admin/offers-page.js"></script>
+
+          <%- include('./partials/footer') %>

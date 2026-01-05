@@ -1,0 +1,75 @@
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+  <div class="sidebar-sticky pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'dashboard' ? 'active' : '' %>" href="/admin">
+          <i class="fas fa-tachometer-alt"></i>
+          Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'users' ? 'active' : '' %>" href="/admin/users">
+          <i class="fas fa-users"></i>
+          Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'categories' ? 'active' : '' %>" href="/admin/categories">
+          <i class="fas fa-tags"></i>
+          Categories
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'products' ? 'active' : '' %>" href="/admin/products">
+          <i class="fas fa-box"></i>
+          Products
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'orders' ? 'active' : '' %>" href="/admin/orders">
+          <i class="fas fa-receipt"></i>
+          Orders
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'inventory' ? 'active' : '' %>" href="/admin/inventory">
+          <i class="fas fa-warehouse"></i>
+          Inventory
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'coupons' ? 'active' : '' %>" href="/admin/coupons">
+          <i class="fas fa-ticket-alt"></i>
+          Coupons
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'offers' ? 'active' : '' %>" href="/admin/offers">
+          <i class="fas fa-percent"></i>
+          Offers
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'returns' ? 'active' : '' %>" href="/admin/returns">
+          <i class="fas fa-undo"></i>
+          Return Requests
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link <%= locals.active === 'reports' ? 'active' : '' %>" href="/admin/sales-report">
+          <i class="fas fa-chart-bar"></i>
+          Reports
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <form action="/admin/logout" method="GET">
+        <button type="submit" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>

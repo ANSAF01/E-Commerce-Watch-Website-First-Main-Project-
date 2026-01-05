@@ -1,0 +1,29 @@
+<% if (locals.admin) { %>
+    <%- include('./admin/partials/header',{title:'Error'}) %>
+        <div class="container-fluid py-5">
+            <div class="row">
+                <%- include('./admin/partials/sidebar') %>
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                        <div class="py-5 text-center">
+                            <h2 class="fw-bold mb-3">Oops!</h2>
+                            <p class="text-muted mb-4">
+                                <%= message || 'Something went wrong.' %>
+                            </p>
+                            <a href="/admin" class="btn btn-primary">Go to Admin Dashboard</a>
+                        </div>
+                    </main>
+            </div>
+        </div>
+        <%- include('./admin/partials/footer') %>
+            <% } else { %>
+                <%- include('./partials/head',{title:'Error'}) %>
+                    <%- include('./partials/header') %>
+                        <div class="container py-5 text-center">
+                            <h2 class="fw-bold mb-3">Oops!</h2>
+                            <p class="text-muted mb-4">
+                                <%= message || 'Something went wrong.' %>
+                            </p>
+                            <a href="/" class="btn btn-primary">Go Home</a>
+                        </div>
+                        <%- include('./partials/footer') %>
+                            <% } %>

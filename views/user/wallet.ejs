@@ -1,0 +1,176 @@
+<%- include('../partials/head', { title: 'My Wallet' }) %>
+    <%- include('../partials/header') %>
+
+        <main class="container-fluid py-5">
+            <div class="row g-4">
+                <!-- Sidebar -->
+                <div class="col-12 col-md-3 col-lg-3">
+                    <div class="position-sticky" style="top: 5rem;">
+                        <%- include('../partials/profile-sidebar', { page: 'wallet' , active: 'wallet' }) %>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="col-12 col-md-9 col-lg-9">
+                    <div class="ps-md-3 mt-4">
+                        <h1 class="mb-3">My Wallet</h1>
+                        <hr class="mb-4">
+
+                        <!-- Balance & Stats -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card bg-primary text-white border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h6 class="text-white-50 mb-2">Current Balance</h6>
+                                        <h2 class="fw-bold mb-3">₹<%= wallet.balance.toFixed(2) %>
+                                        </h2>
+                                        <button type="button" class="btn btn-light btn-sm fw-semibold w-100"
+                                            data-bs-toggle="modal" data-bs-target="#addMoneyModal">
+                                            <i class="fas fa-plus-circle me-1"></i>Add Money
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                                                <i class="fas fa-arrow-down text-success"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-muted mb-0 small">Total Credited</h6>
+                                                <h5 class="fw-bold mb-0 text-success">+₹<%=
+                                                        stats.totalCredits.toFixed(2) %>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="bg-danger bg-opacity-10 p-2 rounded me-3">
+                                                <i class="fas fa-arrow-up text-danger"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-muted mb-0 small">Total Debited</h6>
+                                                <h5 class="fw-bold mb-0 text-danger">-₹<%= stats.totalDebits.toFixed(2)
+                                                        %>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transactions -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="card-title mb-0">Transaction History</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <% if (wallet.transactions && wallet.transactions.length> 0) { %>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="ps-3">Date</th>
+                                                    <th>Description</th>
+                                                    <th>Type</th>
+                                                    <th class="text-end pe-3">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% wallet.transactions.forEach(t=> { %>
+                                                    <tr>
+                                                        <td class="ps-3 border-bottom-0">
+                                                            <div class="small fw-bold">
+                                                                <%= new Date(t.createdAt).toLocaleDateString() %>
+                                                            </div>
+                                                            <div class="text-muted" style="font-size: 0.8rem;">
+                                                                <%= new Date(t.createdAt).toLocaleTimeString([],
+                                                                    {hour: '2-digit' , minute:'2-digit'}) %>
+                                                            </div>
+                                                        </td>
+                                                        <td class="border-bottom-0">
+                                                            <span class="d-block text-dark">
+                                                                <%= t.description %>
+                                                            </span>
+                                                            <span class="badge bg-light text-secondary border">
+                                                                <%= t.status %>
+                                                            </span>
+                                                        </td>
+                                                        <td class="border-bottom-0">
+                                                            <% if (t.type==='credit' ) { %>
+                                                                <span
+                                                                    class="badge bg-success bg-opacity-10 text-success">Credit</span>
+                                                                <% } else { %>
+                                                                    <span
+                                                                        class="badge bg-danger bg-opacity-10 text-danger">Debit</span>
+                                                                    <% } %>
+                                                        </td>
+                                                        <td
+                                                            class="text-end pe-3 fw-bold border-bottom-0 <%= t.type === 'credit' ? 'text-success' : 'text-danger' %>">
+                                                            <%= t.type==='credit' ? '+' : '-' %>₹<%= t.amount.toFixed(2)
+                                                                    %>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    <% if (pagination.totalItems> pagination.limit) { %>
+                                        <div class="p-3">
+                                            <%- include('../partials/pagination') %>
+                                        </div>
+                                        <% } %>
+
+                                            <% } else { %>
+                                                <div class="text-center py-5">
+                                                    <i class="fas fa-wallet fa-3x text-muted mb-3 opacity-50"></i>
+                                                    <p class="text-muted mb-0">No transactions found</p>
+                                                </div>
+                                                <% } %>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Add Money Modal -->
+        <div class="modal fade" id="addMoneyModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Add Money to Wallet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addMoneyForm">
+                            <div class="mb-3">
+                                <label class="form-label">Amount (₹)</label>
+                                <input type="number" class="form-control form-control-lg" id="addAmount" name="amount"
+                                    min="1" max="100000" placeholder="Enter amount">
+                                <small class="text-muted">Min: ₹1, Max: ₹1,00,000</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">Proceed to Pay</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+            window.RAZORPAY_KEY_ID = "<%= razorpayKeyId %>";
+        </script>
+        <script src="/js/pages/wallet-page.js"></script>
+        <%- include('../partials/footer') %>

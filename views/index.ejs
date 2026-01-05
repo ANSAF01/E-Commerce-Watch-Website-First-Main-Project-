@@ -1,0 +1,52 @@
+<%- include('./partials/head',{title:'Home'}) %>
+    <%- include('./partials/header') %>
+
+        <div class="hero position-relative">
+            <img src="/images/banner.jpg" alt="Luxury Watch" class="d-block w-100"
+                style="height: 80vh; object-fit: cover;">
+        </div>
+
+        <section class="container py-5">
+            <h2 class="text-center mb-4">New Arrivals</h2>
+            <div class="row g-4">
+                <% if (typeof newArrivals !=='undefined' && newArrivals.length> 0) { %>
+                    <% newArrivals.forEach(product=> { %>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <%- include('./partials/product-card', { product: product }) %>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="col-12">
+                                    <p class="text-center text-muted">No new arrivals to show right now.</p>
+                                </div>
+                                <% } %>
+            </div>
+        </section>
+
+        <section class="text-white d-flex align-items-center justify-content-center text-center"
+            style="background-image: url('/images/banner1.jpg'); background-size: cover; background-position: center; min-height: 300px;">
+            <div class="container" style="background-color: rgba(0,0,0,0.4); padding: 2rem; border-radius: .5rem;">
+                <h2 class="fw-bold mb-3">Crafted for Perfection</h2>
+                <a href="/shop" class="btn btn-outline-light">Explore The Collection</a>
+            </div>
+        </section>
+
+        <section class="container py-5">
+            <h2 class="text-center mb-4">Trending</h2>
+            <div class="row g-4">
+                <% if (typeof trendingProducts !=='undefined' && trendingProducts.length> 0) { %>
+                    <% trendingProducts.forEach(product=> { %>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <%- include('./partials/product-card', { product: product }) %>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="col-12">
+                                    <p class="text-center text-muted">No trending products to show right now.</p>
+                                </div>
+                                <% } %>
+            </div>
+        </section>
+
+        <script src="/js/pages/shop-page.js"></script>
+        <%- include('./partials/footer') %>

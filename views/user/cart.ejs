@@ -1,0 +1,87 @@
+<%- include('../partials/head',{title:'My Cart'}) %>
+<%- include('../partials/header') %>
+
+<main class="container-fluid py-5">
+  <div class="row g-4">
+    <div class="col-12 col-md-3 col-lg-3">
+      <div class="position-sticky" style="top: 5rem;">
+        <%- include('../partials/profile-sidebar', { page: 'cart', active: 'cart' }) %>
+      </div>
+    </div>
+    <div class="col-12 col-md-9 col-lg-9">
+      <div class="ps-md-3 mt-4">
+        <h1 class="mb-3">My Cart</h1>
+        <hr class="mb-4">
+        <% if (locals.user) { %>
+          <% const items = (locals.cart && cart.items) ? cart.items : []; %>
+          <% if (items.length === 0) { %>
+            <div class="alert alert-info">Your cart is empty.</div>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table align-middle table-sm">
+                <thead>
+                  <tr>
+                    <th style="width: 40%;">Product</th>
+                    <th style="width: 25%;">Quantity</th>
+                    <th style="width: 15%;">Price</th>
+                    <th style="width: 20%;" class="text-end">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% items.forEach((item) => { %>
+                    <% const p = item.productId; %>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center gap-2">
+                          <img src="<%= (p && p.images && p.images[0]) ? (p.images[0].url || p.images[0]) : '/images/banner.jpg' %>" alt="<%= p ? p.name : 'Product' %>" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                          <div>
+                            <a href="/product/<%= p ? p._id : '' %>" class="fw-semibold text-decoration-none text-dark"><%= p ? p.name : 'Unknown Product' %></a>
+                            <div class="text-muted small">₹<%= typeof item.currentPrice !== 'undefined' ? item.currentPrice.toFixed(2) : item.unitPrice.toFixed(2) %></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <% const stock = p && typeof p.stock === 'number' ? p.stock : 0; %>
+                        <div class="d-flex align-items-center gap-1" data-product-id="<%= p ? p._id : '' %>">
+                          <button type="button" class="btn btn-sm btn-outline-secondary js-dec px-2" <%= item.quantity <= 1 ? 'disabled' : '' %>>−</button>
+                          <input type="number" class="form-control form-control-sm js-qty text-center" value="<%= item.quantity %>" min="1" max="<%= Math.min(stock, 5) %>" style="width: 50px; padding: 0.25rem;">
+                          <button type="button" class="btn btn-sm btn-outline-secondary js-inc px-2" <%= (item.quantity >= Math.min(stock, 5)) ? 'disabled' : '' %>>+</button>
+                        </div>
+                        <% if (stock <= 0) { %>
+                          <div class="text-danger small mt-1">Out of stock</div>
+                        <% } else if (item.quantity >= stock) { %>
+                          <div class="text-warning small mt-1">Only <%= stock %> left</div>
+                        <% } %>
+                      </td>
+                      <td class="js-line-total">₹<%= (typeof item.currentLineTotal !== 'undefined' ? item.currentLineTotal : item.lineTotal).toFixed(2) %></td>
+                      <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-outline-danger js-remove" data-product-id="<%= p ? p._id : '' %>">Remove</button>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+              <div class="card p-3" style="min-width: 280px;">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-semibold">Total</span>
+                  <span class="js-subtotal">₹<%= subtotal.toFixed(2) %></span>
+                </div>
+                <% const hasOutOfStock = items.some(it => (it.productId && typeof it.productId.stock === 'number' ? it.productId.stock : 0) <= 0); %>
+                <a href="<%= hasOutOfStock ? '#' : '/user/checkout' %>" class="btn btn-dark mt-2 <%= hasOutOfStock ? 'disabled' : '' %>" <%= hasOutOfStock ? 'aria-disabled="true" tabindex="-1"' : '' %>>Proceed to Checkout</a>
+              </div>
+            </div>
+          <% } %>
+        <% } else { %>
+          <p>Please <a href="/auth/login">log in</a> to view your cart.</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+
+<script src="/js/user-common.js"></script>
+<script src="/js/pages/cart-page.js"></script>

@@ -1,0 +1,57 @@
+<%- include('../partials/head', { title: title || 'Verify OTP' }) %>
+    <%- include('../partials/header') %>
+
+        <div class="container py-5" style="max-width: 480px;">
+            <div id="otpConfig" data-remaining-cooldown="<%= remainingCooldown %>"></div>
+            <div class="text-center mb-4">
+                <h4 class="fw-bold mb-2">
+                    <%= title || 'Verify OTP' %>
+                </h4>
+                <p class="text-muted small">
+                    Enter the 6-digit OTP sent to <br>
+                    <strong>
+                        <%= email %>
+                    </strong>
+                </p>
+            </div>
+
+            <form id="otpForm" novalidate>
+                <input type="hidden" name="email" value="<%= email %>">
+
+                <div class="mb-4">
+                    <input type="text" name="otp" id="otpInput" maxlength="6" inputmode="numeric"
+                        class="form-control form-control-lg text-center fw-bold" placeholder="000000"
+                        autocomplete="off">
+                    <small class="text-danger d-block mt-2" id="otpError" style="display: none;"></small>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 fw-bold" id="verifyBtn">
+                    <i class="fas fa-check me-2"></i>Verify OTP
+                </button>
+            </form>
+
+            <div class="text-center mt-5 pt-4 border-top">
+                <p class="small text-muted mb-3">Didn't receive the OTP?</p>
+
+                <form method="POST" action="/auth/resend-otp" id="resendForm" style="display: inline;">
+                    <input type="hidden" name="email" value="<%= email %>">
+                    <button type="submit" class="btn btn-link btn-sm p-0" id="resendBtn"
+                        style="color: #0d6efd; text-decoration: none; font-weight: 600;" disabled>
+                        Resend OTP
+                    </button>
+                </form>
+
+                <span id="resendCooldownText" style="display: none;" class="ms-2">
+                    in <strong id="resendCooldown">00:45</strong>
+                </span>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/auth/login" class="small text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Login
+                </a>
+            </div>
+        </div>
+
+        <script src="/js/pages/otp-page.js"></script>
+        <%- include('../partials/footer') %>

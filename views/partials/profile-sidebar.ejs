@@ -1,0 +1,46 @@
+<aside class="account-sidebar card shadow-sm">
+    <div class="list-group list-group-flush">
+        <a href="/user/profile"
+            class="list-group-item list-group-item-action <%= page === 'profile' ? 'active' : '' %>">
+            <i class="fas fa-user me-2"></i> My Profile
+        </a>
+
+        <a href="/user/profile/edit"
+            class="list-group-item list-group-item-action <%= page === 'edit' ? 'active' : '' %>">
+            <i class="fas fa-user-edit me-2"></i> Edit Profile
+        </a>
+
+        <a href="/user/change-password"
+            class="list-group-item list-group-item-action <%= page === 'password' ? 'active' : '' %>">
+            <i class="fas fa-key me-2"></i> Change Password
+        </a>
+
+        <a href="/user/addresses"
+            class="list-group-item list-group-item-action <%= page === 'addresses' ? 'active' : '' %>">
+            <i class="fas fa-map-marker-alt me-2"></i> Addresses
+        </a>
+
+        <a href="/user/orders" class="list-group-item list-group-item-action <%= page === 'orders' ? 'active' : '' %>">
+            <i class="fas fa-box-open me-2"></i> Orders
+        </a>
+
+        <a href="/user/cart" class="list-group-item list-group-item-action <%= page === 'cart' ? 'active' : '' %>">
+            <i class="fas fa-shopping-cart me-2"></i> Cart
+        </a>
+
+        <a href="/user/wishlist"
+            class="list-group-item list-group-item-action <%= page === 'wishlist' ? 'active' : '' %>">
+            <i class="fas fa-heart me-2"></i> Wishlist
+        </a>
+
+        <a href="/user/wallet" class="list-group-item list-group-item-action <%= page === 'wallet' ? 'active' : '' %>">
+            <i class="fas fa-wallet me-2"></i> Wallet
+        </a>
+
+        <form action="/auth/logout" method="GET" style="width: 100%;" class="logout-form">
+            <button type="submit" class="list-group-item list-group-item-action text-danger w-100">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </button>
+        </form>
+    </div>
+</aside>

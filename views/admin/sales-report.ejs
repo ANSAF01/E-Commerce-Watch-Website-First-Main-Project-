@@ -1,0 +1,202 @@
+<%- include('./partials/header', { title: 'Sales Report' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Sales Report</h1>
+  </div>
+
+  <!-- Filter Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="GET" class="row g-3" id="filterForm">
+        <div class="col-md-2">
+          <label class="form-label">Quick Filter</label>
+          <select class="form-select" id="quickFilterSelect" onchange="handleQuickFilter(this.value)">
+            <option value="">Custom Range</option>
+            <option value="daily" <%=filterType==='daily' ? 'selected' : '' %>>Today</option>
+            <option value="monthly" <%=filterType==='monthly' ? 'selected' : '' %>>This Month</option>
+            <option value="yearly" <%=filterType==='yearly' ? 'selected' : '' %>>This Year</option>
+          </select>
+          <input type="hidden" name="filterType" id="filterTypeInput" value="<%= filterType %>">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">From Date</label>
+          <input type="date" name="from" value="<%= from %>" class="form-control" id="fromDate">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">To Date</label>
+          <input type="date" name="to" value="<%= to %>" class="form-control" id="toDate">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-filter me-2"></i>Filter
+          </button>
+        </div>
+        <div class="col-md-4 d-flex align-items-end gap-2">
+          <button type="button" class="btn btn-success flex-grow-1" id="downloadPdfBtn">
+            <i class="fas fa-file-pdf me-2"></i>PDF
+          </button>
+          <button type="button" class="btn btn-info flex-grow-1" id="downloadExcelBtn">
+            <i class="fas fa-file-excel me-2"></i>Excel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="text-muted mb-2">Total Orders</h6>
+          <h3 class="fw-bold text-primary">
+            <%= totals.totalOrders %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="text-muted mb-2">Total Sales</h6>
+          <h3 class="fw-bold text-success">
+            ₹<%= (totals.totalAmount || 0).toFixed(2) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="text-muted mb-2">Total Discount</h6>
+          <h3 class="fw-bold text-warning">
+            ₹<%= (totals.totalDiscount || 0).toFixed(2) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Card -->
+  <div class="card mb-4">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Report Summary</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Period:</strong>
+            <%= from %> to <%= to %>
+          </p>
+          <p><strong>Total Orders:</strong>
+            <%= totals.totalOrders %>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Total Sales:</strong> ₹<%= (totals.totalAmount || 0).toFixed(2) %>
+          </p>
+          <p><strong>Total Discount:</strong> ₹<%= (totals.totalDiscount || 0).toFixed(2) %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Details Table -->
+  <div class="card mb-4">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Orders Details</h5>
+    </div>
+    <div class="card-body p-0">
+      <% if (orders && orders.length> 0) { %>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Payment Method</th>
+                <th>Subtotal</th>
+                <th>Discount</th>
+                <th>Grand Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(order=> { %>
+                <tr>
+                  <td>
+                    <strong>
+                      <%= order.orderId %>
+                    </strong>
+                  </td>
+                  <td>
+                    <div><strong>
+                        <%= order.customerName %>
+                      </strong></div>
+                    <small class="text-muted">
+                      <%= order.customerEmail %>
+                    </small>
+                  </td>
+                  <td>
+                    <small>
+                      <%= order.date %>
+                    </small>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark">
+                      <%= order.itemCount %>
+                    </span>
+                  </td>
+                  <td>
+                    <% if (order.paymentMethod==='COD' ) { %>
+                      <i class="fas fa-money-bill-wave me-2 text-info"></i><small>Cash on Delivery</small>
+                      <% } else if (order.paymentMethod==='RAZORPAY' ) { %>
+                        <i class="fas fa-credit-card me-2 text-primary"></i><small>Razorpay</small>
+                        <% } else if (order.paymentMethod==='WALLET' ) { %>
+                          <i class="fas fa-wallet me-2 text-success"></i><small>Wallet</small>
+                          <% } else { %>
+                            <small>
+                              <%= order.paymentMethod %>
+                            </small>
+                            <% } %>
+                  </td>
+                  <td>
+                    <strong>
+                      ₹<%= (order.subtotal || 0).toFixed(2) %>
+                    </strong>
+                  </td>
+                  <td>
+                    <% if (order.discount> 0) { %>
+                      <span class="text-success"><strong>-₹<%= (order.discount || 0).toFixed(2) %></strong></span>
+                      <% } else { %>
+                        <span class="text-muted">-</span>
+                        <% } %>
+                  </td>
+                  <td>
+                    <strong class="text-primary">
+                      ₹<%= (order.grandTotal || 0).toFixed(2) %>
+                    </strong>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <% } else { %>
+          <div class="text-center text-muted py-4">
+            <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+            No orders found for the selected period
+          </div>
+          <% } %>
+    </div>
+  </div>
+
+  <!-- Payment Method Breakdown removed -->
+  </div>
+  </div>
+
+  <%- include('./partials/footer') %>
+
+    <script src="/js/admin/sales-report-page.js"></script>

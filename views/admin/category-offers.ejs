@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+
+  <div class="container-fluid mt-4">
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h2>Category Offers</h2>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form id="categoryOfferForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="categoryId" class="form-label">Select Category</label>
+              <select class="form-select" id="categoryId" name="categoryId">
+                <option value="">-- Choose Category --</option>
+                <% categories.forEach(category=> { %>
+                  <option value="<%= category._id %>">
+                    <%= category.name %>
+                  </option>
+                  <% }); %>
+              </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="percent" class="form-label">Offer Percentage (%)</label>
+              <input type="number" class="form-control" id="percent" name="percent" min="0" max="100"
+                placeholder="Enter offer percentage">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="startAt" class="form-label">Start Date (Optional)</label>
+              <input type="date" class="form-control" id="startAt" name="startAt">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="endAt" class="form-label">End Date (Optional)</label>
+              <input type="date" class="form-control" id="endAt" name="endAt">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Apply Offer</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5>Active Category Offers</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Offer %</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% categories.forEach(category=> { %>
+                <% if (category.offer && category.offer.active && category.offer.percent> 0) { %>
+                  <tr>
+                    <td>
+                      <%= category.name %>
+                    </td>
+                    <td><strong>
+                        <%= category.offer.percent %>%
+                      </strong></td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td>
+                      <%= category.offer.startAt ? new Date(category.offer.startAt).toLocaleDateString() : 'N/A' %>
+                    </td>
+                    <td>
+                      <%= category.offer.endAt ? new Date(category.offer.endAt).toLocaleDateString() : 'N/A' %>
+                    </td>
+                  </tr>
+                  <% } %>
+                    <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin/offers-page.js"></script>
+
+  <%- include('partials/footer') %>

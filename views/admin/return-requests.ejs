@@ -1,0 +1,85 @@
+<%- include('./partials/header', { title: 'Return Requests' }) %>
+
+  <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Return Requests</h1>
+  </div>
+
+  <% if (locals.success && locals.success.length> 0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      <%= success[0] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <% } %>
+      <% if (locals.error && locals.error.length> 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <%= error[0] %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+          <% if (returns.length===0) { %>
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              No pending return requests at the moment.
+            </div>
+            <% } else { %>
+              <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Email</th>
+                      <th>Return Reason</th>
+                      <th>Status</th>
+                      <th>Requested Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% returns.forEach(returnReq=> { %>
+                      <tr>
+                        <td><strong>
+                            <%= returnReq.orderId?.orderId || 'N/A' %>
+                          </strong></td>
+                        <td>
+                          <%= returnReq.userId?.fullname || 'N/A' %>
+                        </td>
+                        <td>
+                          <%= returnReq.userId?.email || 'N/A' %>
+                        </td>
+                        <td>
+                          <small>
+                            <%= returnReq.reason %>
+                          </small>
+                        </td>
+                        <td>
+                          <span class="badge bg-warning">
+                            <%= returnReq.status %>
+                          </span>
+                        </td>
+                        <td>
+                          <%= new Date(returnReq.createdAt).toLocaleDateString() %>
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-success approve-btn" data-id="<%= returnReq._id %>"
+                            data-order="<%= returnReq.orderId?._id %>">
+                            Approve
+                          </button>
+                          <button class="btn btn-sm btn-danger reject-btn" data-id="<%= returnReq._id %>"
+                            data-order="<%= returnReq.orderId?._id %>">
+                            Reject
+                          </button>
+                        </td>
+                      </tr>
+                      <% }); %>
+                  </tbody>
+                </table>
+              </div>
+
+              <%- include('../partials/pagination', { pagination }) %>
+                <% } %>
+
+                  <%- include('./partials/footer') %>

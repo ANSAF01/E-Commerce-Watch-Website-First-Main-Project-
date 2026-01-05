@@ -1,0 +1,75 @@
+<% if (pagination) { %>
+    <% const totalPages=Math.max(1, Math.ceil(pagination.totalItems / pagination.limit)); const current=Math.max(1,
+        pagination.currentPage); const buildLink=(targetPage)=> {
+        const params = new URLSearchParams();
+
+        // 1. Incorporate 'filters' object if present (Used in Shop, some Admin pages)
+        if (locals.filters && typeof locals.filters === 'object') {
+        Object.keys(locals.filters).forEach(key => {
+        if (locals.filters[key] !== undefined && locals.filters[key] !== '') {
+        params.set(key, locals.filters[key]);
+        }
+        });
+        }
+
+        // 2. Incorporate top-level locals if not already set (Used in many Admin pages)
+        const commonParams = ['search', 'status', 'sort', 'category', 'minPrice', 'maxPrice', 'type'];
+        commonParams.forEach(key => {
+        if (locals[key] !== undefined && locals[key] !== '' && !params.has(key)) {
+        params.set(key, locals[key]);
+        }
+        });
+
+        // 3. Set the page
+        params.set('page', targetPage);
+        return '?' + params.toString();
+        };
+        %>
+
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center align-items-center mb-0 gap-2">
+
+                <!-- Previous Button -->
+                <li class="page-item <%= current <= 1 ? 'disabled' : '' %>">
+                    <% if (current> 1) { %>
+                        <a class="page-link rounded-circle d-flex align-items-center justify-content-center"
+                            href="<%= buildLink(current - 1) %>"
+                            style="width: 38px; height: 38px; color: #495057; border-color: #dee2e6;">
+                            <i class="fas fa-chevron-left small"></i>
+                        </a>
+                        <% } else { %>
+                            <span
+                                class="page-link rounded-circle d-flex align-items-center justify-content-center bg-light text-muted"
+                                style="width: 38px; height: 38px; border-color: #dee2e6; cursor: not-allowed;">
+                                <i class="fas fa-chevron-left small"></i>
+                            </span>
+                            <% } %>
+                </li>
+
+                <!-- Page Counter -->
+                <li class="page-item disabled">
+                    <span class="page-link border-0 bg-transparent text-dark fw-semibold px-3">
+                        Page <%= current %> of <%= totalPages %>
+                    </span>
+                </li>
+
+                <!-- Next Button -->
+                <li class="page-item <%= current >= totalPages ? 'disabled' : '' %>">
+                    <% if (current < totalPages) { %>
+                        <a class="page-link rounded-circle d-flex align-items-center justify-content-center"
+                            href="<%= buildLink(current + 1) %>"
+                            style="width: 38px; height: 38px; color: #495057; border-color: #dee2e6;">
+                            <i class="fas fa-chevron-right small"></i>
+                        </a>
+                        <% } else { %>
+                            <span
+                                class="page-link rounded-circle d-flex align-items-center justify-content-center bg-light text-muted"
+                                style="width: 38px; height: 38px; border-color: #dee2e6; cursor: not-allowed;">
+                                <i class="fas fa-chevron-right small"></i>
+                            </span>
+                            <% } %>
+                </li>
+
+            </ul>
+        </nav>
+        <% } %>

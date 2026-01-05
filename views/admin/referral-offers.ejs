@@ -1,0 +1,123 @@
+<%- include('partials/header') %>
+
+  <div class="container-fluid mt-4">
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h2>Referral Offers</h2>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form id="referralOfferForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="referrerBonus" class="form-label">Referrer Bonus (₹)</label>
+              <input type="number" class="form-control" id="referrerBonus" name="referrerBonus" min="0"
+                placeholder="Amount for referrer">
+              <small class="text-danger d-none" id="error-referrerBonus"></small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="refereeBonus" class="form-label">Referee Bonus (₹)</label>
+              <input type="number" class="form-control" id="refereeBonus" name="refereeBonus" min="0"
+                placeholder="Amount for referee">
+              <small class="text-danger d-none" id="error-refereeBonus"></small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label for="description" class="form-label">Description (Optional)</label>
+              <textarea class="form-control" id="description" name="description" rows="3"
+                placeholder="Describe the referral offer"></textarea>
+              <small class="text-danger d-none" id="error-description"></small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="startAt" class="form-label">Start Date (Optional)</label>
+              <input type="date" class="form-control" id="startAt" name="startAt">
+              <small class="text-danger d-none" id="error-startAt"></small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="endAt" class="form-label">End Date (Optional)</label>
+              <input type="date" class="form-control" id="endAt" name="endAt">
+              <small class="text-danger d-none" id="error-endAt"></small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="isActive" name="isActive" checked>
+              <label class="form-check-label" for="isActive">
+                Active
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Update Referral Offer</button>
+        </form>
+      </div>
+    </div>
+
+    <% if (referralOffers) { %>
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5>Current Referral Offer</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Referrer Bonus:</strong> ₹<%= referralOffers.referrerBonus %>
+              </p>
+              <p><strong>Referee Bonus:</strong> ₹<%= referralOffers.refereeBonus %>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Status:</strong>
+                <% if (referralOffers.isActive) { %>
+                  <span class="badge bg-success">Active</span>
+                  <% } else { %>
+                    <span class="badge bg-danger">Inactive</span>
+                    <% } %>
+              </p>
+              <% if (referralOffers.description) { %>
+                <p><strong>Description:</strong>
+                  <%= referralOffers.description %>
+                </p>
+                <% } %>
+            </div>
+          </div>
+          <% if (referralOffers.startAt || referralOffers.endAt) { %>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <% if (referralOffers.startAt) { %>
+                  <p><strong>Start Date:</strong>
+                    <%= new Date(referralOffers.startAt).toLocaleDateString() %>
+                  </p>
+                  <% } %>
+              </div>
+              <div class="col-md-6">
+                <% if (referralOffers.endAt) { %>
+                  <p><strong>End Date:</strong>
+                    <%= new Date(referralOffers.endAt).toLocaleDateString() %>
+                  </p>
+                  <% } %>
+              </div>
+            </div>
+            <% } %>
+        </div>
+      </div>
+      <% } else { %>
+        <div class="alert alert-info mt-4">
+          No referral offer configured yet. Create one using the form above.
+        </div>
+        <% } %>
+  </div>
+
+  <script src="/js/admin/offers-page.js"></script>
+
+  <%- include('partials/footer') %>

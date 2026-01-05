@@ -1,0 +1,100 @@
+<%- include('../partials/head', { title: 'Payment Failed' }) %>
+  <%- include('../partials/header') %>
+
+    <main class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="text-center py-5">
+            <!-- Illustration -->
+            <div class="mb-4">
+              <i class="fas fa-times-circle text-danger" style="font-size: 5rem;"></i>
+            </div>
+
+            <!-- Title & Statement -->
+            <h1 class="mb-2 fw-bold">Payment Failed</h1>
+            <p class="lead text-muted mb-4">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              Unfortunately, your payment could not be processed. Your order has been saved and you can retry the
+              payment anytime.
+            </p>
+
+            <!-- Error Details
+            <% if (locals.error) { %>
+              <div class="alert alert-danger mb-4">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>Error:</strong>
+                <%= error %>
+              </div>
+              <% } %> -->
+
+                <!-- Order Details (if available) -->
+                <% if (locals.orderId) { %>
+                  <div class="card mb-4 border-danger">
+                    <div class="card-header bg-light border-danger">
+                      <h6 class="mb-0 text-danger">
+                        <i class="fas fa-info-circle me-2"></i>Order Details
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="row text-center">
+                        <div class="col-6 mb-3">
+                          <h6 class="text-muted mb-1">Order ID</h6>
+                          <p class="mb-0 fw-semibold">
+                            <%= orderId %>
+                          </p>
+                        </div>
+                        <div class="col-6 mb-3">
+                          <h6 class="text-muted mb-1">Status</h6>
+                          <p class="mb-0">
+                            <span class="badge bg-warning text-dark">Payment Pending</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-center flex-wrap mb-4">
+                      <% if (locals.orderId) { %>
+                        <button class="btn btn-primary btn-lg" id="retryPaymentBtn" data-order-id="<%= orderId %>">
+                          <i class="fas fa-redo me-2"></i>Retry Payment
+                        </button>
+                        <a href="/user/orders/<%= orderId %>" class="btn btn-outline-secondary btn-lg">
+                          <i class="fas fa-info-circle me-2"></i>View Order Details
+                        </a>
+                        <% } else { %>
+                          <a href="/user/checkout" class="btn btn-primary btn-lg">
+                            <i class="fas fa-redo me-2"></i>Retry Payment
+                          </a>
+                          <a href="/user/cart" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-shopping-cart me-2"></i>Back to Cart
+                          </a>
+                          <% } %>
+                            <a href="/shop" class="btn btn-outline-secondary btn-lg">
+                              <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                            </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <p class="text-muted small">
+                      <i class="fas fa-info-circle me-1"></i>
+                      Your order is saved. You can retry the payment from your orders page anytime.
+                    </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+      <!-- Razorpay Script -->
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+      <script>
+        window.RAZORPAY_KEY = '<%= razorpayKeyId || "" %>';
+        window.USER_EMAIL = '<%= user ? user.email : "" %>';
+        window.USER_PHONE = '<%= user ? user.mobile : "" %>';
+      </script>
+      <script src="/js/pages/payment-failed-page.js"></script>
