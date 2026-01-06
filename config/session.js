@@ -14,9 +14,11 @@ const sessionConfig = {
         collectionName: 'sessions',
     }),
     cookie: {
-        httpOnly: true,
-        maxAge: SESSION_MAX_AGE
-    },
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    maxAge: SESSION_MAX_AGE
+},
 };
 
 const adminSessionConfig = {
@@ -29,9 +31,11 @@ const adminSessionConfig = {
         collectionName: 'admin_sessions',
     }),
     cookie: {
-        httpOnly: true,
-        maxAge: SESSION_MAX_AGE
-    },
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    maxAge: SESSION_MAX_AGE
+},
 };
 
 module.exports = { sessionConfig, adminSessionConfig };

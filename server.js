@@ -14,6 +14,8 @@ require('./config/passport');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1);
+
 connectDB();
 
 app.set('view engine', 'ejs');
@@ -59,5 +61,5 @@ app.use((req, res) => {
 app.use(require('./middleware/errorHandler'));
 
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
