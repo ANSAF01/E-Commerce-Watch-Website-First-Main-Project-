@@ -15,9 +15,9 @@ const sessionConfig = {
     }),
     cookie: {
     httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    maxAge: SESSION_MAX_AGE
+    maxAge: SESSION_MAX_AGE,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
 },
 };
 
@@ -32,9 +32,9 @@ const adminSessionConfig = {
     }),
     cookie: {
     httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    maxAge: SESSION_MAX_AGE
+    maxAge: SESSION_MAX_AGE,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
 },
 };
 
