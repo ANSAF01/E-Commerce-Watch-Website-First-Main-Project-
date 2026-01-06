@@ -33,7 +33,7 @@ router.get('/login', redirectIfUserLoggedIn, getLogin);
 router.post('/login', redirectIfUserLoggedIn, loginValidation, postLogin);
 
 router.get('/google', redirectIfUserLoggedIn, passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/google/callback', redirectIfUserLoggedIn, passport.authenticate('google', { failureRedirect: '/auth/login' }), googleCallback);
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/auth/login' }), googleCallback);
 
 router.get('/forgot-password', redirectIfUserLoggedIn, getForgotPassword);
 router.post('/forgot-password', redirectIfUserLoggedIn, forgotPasswordValidation, postForgotPassword);
