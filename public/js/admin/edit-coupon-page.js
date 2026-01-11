@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
     const editCouponForm = document.getElementById('editCouponForm');
+
+    if (editCouponForm) {
+        const expiresAt = editCouponForm.querySelector('input[name="expiresAt"]');
+        if (expiresAt) {
+            const today = new Date().toISOString().split('T')[0];
+            expiresAt.setAttribute('min', today);
+        }
+    }
+
     if (editCouponForm) {
         editCouponForm.addEventListener('submit', async (e) => {
             e.preventDefault();

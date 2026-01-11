@@ -125,7 +125,7 @@ const walletValidation = [
 const referralValidation = [
     body('referralCode')
         .trim()
-        .notEmpty().withMessage('Referral code is required')
+        .optional({ checkFalsy: true })
         .isLength({ min: 5 }).withMessage('Referral code too short')
 ];
 

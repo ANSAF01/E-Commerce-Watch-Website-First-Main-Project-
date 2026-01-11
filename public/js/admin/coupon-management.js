@@ -48,9 +48,25 @@
     });
   }
 
+  function initDateValidation() {
+    const today = new Date().toISOString().split('T')[0];
+    const forms = ['flatForm', 'percentForm'];
+
+    forms.forEach(formId => {
+      const form = document.getElementById(formId);
+      if (form) {
+        const dateInput = form.querySelector('input[name="expiresAt"]');
+        if (dateInput) {
+          dateInput.setAttribute('min', today);
+        }
+      }
+    });
+  }
+
   function init() {
     initCouponToggle();
     initCouponDelete();
+    initDateValidation();
   }
 
   if (document.readyState === 'loading') {

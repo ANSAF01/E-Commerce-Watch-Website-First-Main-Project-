@@ -2,6 +2,32 @@ document.addEventListener('DOMContentLoaded', function () {
     const productForm = document.getElementById('productOfferForm');
     const categoryForm = document.getElementById('categoryOfferForm');
 
+    const startAt = document.getElementById('startAt');
+    const endAt = document.getElementById('endAt');
+
+    if (startAt && endAt) {
+        const today = new Date().toISOString().split('T')[0];
+        startAt.setAttribute('min', today);
+        endAt.setAttribute('min', today);
+
+        startAt.addEventListener('change', function () {
+            if (this.value) {
+                endAt.setAttribute('min', this.value);
+                if (endAt.value && endAt.value < this.value) {
+                    endAt.value = this.value;
+                }
+            } else {
+                endAt.setAttribute('min', today);
+            }
+        });
+
+        endAt.addEventListener('change', function () {
+            if (this.value && startAt.value && startAt.value > this.value) {
+                startAt.value = this.value;
+            }
+        });
+    }
+
     function clearErrors(form) {
         form.querySelectorAll('.text-danger').forEach(el => el.classList.add('d-none'));
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));

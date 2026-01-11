@@ -8,6 +8,32 @@ function handleQuickFilter(filterType) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const fromDateInput = document.getElementById('fromDate');
+    const toDateInput = document.getElementById('toDate');
+
+    if (fromDateInput && toDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        fromDateInput.setAttribute('max', today);
+        toDateInput.setAttribute('max', today);
+
+        fromDateInput.addEventListener('change', function () {
+            if (this.value) {
+                toDateInput.setAttribute('min', this.value);
+                if (toDateInput.value && toDateInput.value < this.value) {
+                    toDateInput.value = this.value;
+                }
+            }
+        });
+
+        toDateInput.addEventListener('change', function () {
+            if (this.value) {
+                fromDateInput.setAttribute('max', this.value);
+                if (fromDateInput.value && fromDateInput.value > this.value) {
+                    fromDateInput.value = this.value;
+                }
+            }
+        });
+    }
     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
     const downloadExcelBtn = document.getElementById('downloadExcelBtn');
 
