@@ -21,6 +21,7 @@ const {
     getChangePassword,
     postChangePassword,
     postSendChangeEmailOTP,
+    postVerifyCurrentPassword,
 } = require('../controllers/user/profileController');
 
 const {
@@ -92,6 +93,7 @@ router.post('/profile/change-email-otp', authUser, emailOnlyValidation, postSend
 
 router.get('/change-password', authUser, getChangePassword);
 router.post('/change-password', authUser, passwordChangeValidation, postChangePassword);
+router.post('/change-password/verify', authUser, postVerifyCurrentPassword);
 
 router.get('/cart', authUser, getCart);
 router.post('/cart/add', authUser, postAddToCart);

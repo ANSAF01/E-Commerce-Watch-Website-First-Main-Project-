@@ -224,6 +224,8 @@ const profileValidation = [
 ];
 
 const passwordChangeValidation = [
+    body('currentPassword')
+        .notEmpty().withMessage('Current password is required'),
     body('newPassword')
         .isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
         .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
